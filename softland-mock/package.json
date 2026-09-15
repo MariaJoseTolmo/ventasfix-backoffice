@@ -1,0 +1,16 @@
+{
+  "name": "softland-mock",
+  "version": "1.0.0",
+  "description": "Minimal mock of the Softland ERP API, used to exercise the adapter built in tramo 2",
+  "private": true,
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "5.2.1"
+  }
+}
