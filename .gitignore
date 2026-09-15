@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Uploaded files (keep the directory and the seed placeholders, ignore the rest)
+uploads/*
+!uploads/.gitkeep
+!uploads/seed/
+
+# Build output
+dist/
+build/
+
+# Test coverage
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Tooling cache and course material that is not part of the deliverable
+.atl/
+Curso_*.pdf
