@@ -1,0 +1,13 @@
+node_modules
+npm-debug.log
+.env
+.env.*
+!.env.example
+coverage
+tests
+uploads/*
+!uploads/.gitkeep
+
+# Placeholder images referenced by the product seeder; they ship inside
+# the api image so the named volume is initialised with them.
+!uploads/seed/
