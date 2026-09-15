@@ -1,0 +1,5 @@
+/* antd v5+ ships no global reset: without this the browser's default 8px
+   body margin adds a permanent scrollbar to every 100vh layout. */
+body {
+  margin: 0;
+}

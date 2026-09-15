@@ -1,0 +1,41 @@
+{
+  "name": "ventasfix-web",
+  "version": "1.0.0",
+  "description": "VentasFix backoffice frontend (React + Vite + Ant Design)",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@ant-design/icons": "6.3.4",
+    "@tanstack/react-query": "5.102.8",
+    "antd": "6.6.4",
+    "axios": "1.20.0",
+    "dayjs": "1.11.23",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-router-dom": "7.18.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@testing-library/user-event": "14.6.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "eslint": "10.10.0",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "17.12.0",
+    "jsdom": "30.0.1",
+    "msw": "2.15.0",
+    "vite": "8.3.0",
+    "vitest": "5.0.1"
+  }
+}
