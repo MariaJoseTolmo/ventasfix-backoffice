@@ -1,0 +1,81 @@
+name: ventasfix
+
+# Development compose: fast iteration. The api runs under nodemon with a bind
+# mount of its source so code changes reload without rebuilding the image.
+# See docs/adr/ADR-012-docker-compose-dev-y-entrega.md.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ventasfix}
+      POSTGRES_USER: ${DB_USER:-ventasfix}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ventasfix}
+    ports:
+      # Host port is configurable (defaults to the documented 5432) so it
+      # doesn't collide with a Postgres already installed on the dev
+      # machine. The api always talks to the container over the internal
+      # docker network at port 5432 regardless of this mapping.
+      - "${DB_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ventasfix} -d ${DB_NAME:-ventasfix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: npm run dev
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./api/src:/app/src
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  softland-mock:
+    build:
+      context: ./softland-mock
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SOFTLAND_API_KEY: ${SOFTLAND_API_KEY:-softland-dev-key}
+      PORT: 4000
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      # Stop at the "build" stage (node + npm, source copied in) instead of
+      # the final nginx stage: dev needs the Vite dev server, not a static
+      # build served by Nginx (that's what docker-compose.prod.yml uses).
+      target: build
+    restart: unless-stopped
+    command: npm run dev -- --host
+    environment:
+      VITE_API_PROXY_TARGET: http://api:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./web/src:/app/src
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  uploads:

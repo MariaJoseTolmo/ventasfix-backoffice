@@ -1,0 +1,69 @@
+name: ventasfix
+
+# Delivery compose: what the evaluator runs. Same services as
+# docker-compose.yml, but the api runs its production start command with no
+# file watcher and no bind mount — the image is self-contained.
+# See docs/adr/ADR-012-docker-compose-dev-y-entrega.md.
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-ventasfix}
+      POSTGRES_USER: ${DB_USER:-ventasfix}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-ventasfix}
+    ports:
+      # See docker-compose.yml for why this is configurable.
+      - "${DB_HOST_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-ventasfix} -d ${DB_NAME:-ventasfix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: npm start
+    env_file:
+      - .env
+    environment:
+      DB_HOST: postgres
+      NODE_ENV: production
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  softland-mock:
+    build:
+      context: ./softland-mock
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      SOFTLAND_API_KEY: ${SOFTLAND_API_KEY:-softland-dev-key}
+      PORT: 4000
+    ports:
+      - "4000:4000"
+
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  uploads:
