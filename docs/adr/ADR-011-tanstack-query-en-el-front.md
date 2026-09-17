@@ -88,6 +88,11 @@ Es el patrón **Container / Presentational**: las páginas orquestan y obtienen 
 | `PageHeader` | Título y acción primaria | Dashboard y los 3 mantenedores (el login no comparte la cáscara) |
 | `ConfirmDelete` | Confirmación de acción destructiva | 3 borrados |
 | `StatCard` | Conteo del dashboard con estado de carga | 3 tarjetas |
+| `StockGauge` | Estado y barra de stock a partir de los tres umbrales | `ProductsPage` y el panel "Needs attention" del dashboard |
+
+### `useProducts` en el dashboard
+
+El dashboard ya no consume solo `useDashboard`. La tarjeta "Inventory value" y el panel "Needs attention" reutilizan `useProducts` —el mismo hook y la misma query de `ProductsPage`, sin un nuevo llamado HTTP— para derivar el valor de inventario y priorizar los productos que necesitan atención. Por eso el dashboard tiene dos estados de carga independientes: uno para los tres conteos (`useDashboard`) y otro propio para la tarjeta de inventario (`useProducts`).
 
 
 ## Evidencia

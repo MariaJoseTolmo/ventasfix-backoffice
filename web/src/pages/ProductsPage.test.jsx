@@ -6,13 +6,16 @@ import { renderWithProviders } from '../test/testUtils';
 import ProductsPage from './ProductsPage';
 
 describe('ProductsPage', () => {
-  it('renders the product list and shows a red stock tag when current_stock < minimum_stock', async () => {
+  it('renders the product list and marks a product below its minimum stock as critical', async () => {
     renderWithProviders(<ProductsPage />);
 
     expect(await screen.findByText('Wireless Mouse')).toBeInTheDocument();
-    const tag = await screen.findByText('Below minimum');
-    expect(tag).toBeInTheDocument();
-    expect(tag.closest('.ant-tag')).toHaveClass('ant-tag-red');
+    // mockProducts: current_stock 2, minimum 10, low 20, high 100 → scaleMax = 120.
+    const gauge = await screen.findByRole('img', {
+      name: 'Stock 2 of 120 — minimum 10, low 20, high 100',
+    });
+    expect(gauge).toBeInTheDocument();
+    expect(screen.getByText('Below minimum')).toBeInTheDocument();
   });
 
   it('shows an error alert, not the empty state, when the API is unreachable', async () => {

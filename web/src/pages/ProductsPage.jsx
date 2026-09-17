@@ -1,53 +1,87 @@
 import { useMemo, useState } from 'react';
-import { Image, Modal, Space, Tag, message } from 'antd';
+import { Image, Modal, Space, Typography, message } from 'antd';
 import PageHeader from '../components/common/PageHeader';
 import CrudTable from '../components/common/CrudTable';
 import EntityForm from '../components/common/EntityForm';
 import ConfirmDelete from '../components/common/ConfirmDelete';
+import StockGauge, { stockStatusRank } from '../components/common/StockGauge';
 import SoftlandSyncPanel from '../components/softland/SoftlandSyncPanel';
 import { useProducts } from '../hooks/useProducts';
 import { getApiError, getErrorMessage, isStatus } from '../utils/apiError';
-import { formatCurrency, toImageSrc } from '../utils/format';
+import { formatCurrency, formatVatDelta, toImageSrc } from '../utils/format';
 
-// Stock threshold semantics (docs/03-MODELO-DATOS.md "Umbrales de stock"):
-// minimum_stock <= low_stock <= high_stock.
-function stockTag(record) {
-  const { current_stock, minimum_stock, low_stock, high_stock } = record;
-  if (current_stock < minimum_stock) return <Tag color="red">Below minimum</Tag>;
-  if (current_stock < low_stock) return <Tag color="gold">Low</Tag>;
-  if (current_stock > high_stock) return <Tag color="blue">Overstock</Tag>;
-  return <Tag color="green">Healthy</Tag>;
+function toThresholds(record) {
+  return {
+    current: record.current_stock,
+    minimum: record.minimum_stock,
+    low: record.low_stock,
+    high: record.high_stock,
+  };
 }
 
 const columns = [
   {
     title: 'Image',
     dataIndex: 'image_url',
-    render: (imageUrl) => <Image src={toImageSrc(imageUrl)} width={48} height={48} style={{ objectFit: 'cover' }} />,
+    render: (imageUrl) => (
+      <Image
+        src={toImageSrc(imageUrl)}
+        width={48}
+        height={48}
+        style={{ objectFit: 'cover', borderRadius: 8, border: '1px solid #e3e7e5' }}
+      />
+    ),
   },
-  { title: 'SKU', dataIndex: 'sku', sorter: (a, b) => a.sku.localeCompare(b.sku) },
-  { title: 'Name', dataIndex: 'name', sorter: (a, b) => a.name.localeCompare(b.name) },
+  {
+    title: 'SKU',
+    dataIndex: 'sku',
+    sorter: (a, b) => a.sku.localeCompare(b.sku),
+    render: (value) => <span className="vf-mono">{value}</span>,
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    sorter: (a, b) => a.name.localeCompare(b.name),
+    render: (value, record) => (
+      <div>
+        <div>{value}</div>
+        <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+          {record.short_description}
+        </Typography.Text>
+      </div>
+    ),
+  },
   {
     title: 'Net price',
     dataIndex: 'net_price',
+    align: 'right',
     sorter: (a, b) => Number(a.net_price) - Number(b.net_price),
-    render: (value) => formatCurrency(value),
+    render: (value) => <span className="vf-mono">{formatCurrency(value)}</span>,
   },
   {
     title: 'Sale price',
     dataIndex: 'sale_price',
+    align: 'right',
     sorter: (a, b) => Number(a.sale_price) - Number(b.sale_price),
-    render: (value) => formatCurrency(value),
+    render: (value, record) => (
+      <div>
+        <div className="vf-mono">{formatCurrency(value)}</div>
+        <Typography.Text type="secondary" className="vf-mono" style={{ fontSize: 12 }}>
+          {formatVatDelta(record.net_price, value)}
+        </Typography.Text>
+      </div>
+    ),
   },
   {
     title: 'Stock',
     dataIndex: 'current_stock',
-    sorter: (a, b) => a.current_stock - b.current_stock,
-    render: (value, record) => (
-      <>
-        {value} {stockTag(record)}
-      </>
-    ),
+    // Sorts by "needs attention" rank (critical < low < ok < overstock),
+    // not by the raw stock number.
+    sorter: (a, b) => stockStatusRank(toThresholds(a)) - stockStatusRank(toThresholds(b)),
+    render: (_, record) => {
+      const thresholds = toThresholds(record);
+      return <StockGauge {...thresholds} />;
+    },
   },
 ];
 
@@ -163,7 +197,7 @@ export default function ProductsPage() {
 
   return (
     <>
-      <PageHeader title="Products" actionLabel="New product" onAction={openCreate} />
+      <PageHeader actionLabel="New product" onAction={openCreate} />
       <div style={{ marginBottom: 16 }}>
         <SoftlandSyncPanel />
       </div>

@@ -70,6 +70,7 @@ Usar una librería **no exime** de crear componentes propios. La evidencia está
 | `PageHeader` | Título y acción primaria | Dashboard y los 3 mantenedores |
 | `StatCard` | `Statistic` + estado de carga | 3 tarjetas del dashboard |
 | `SoftlandSyncPanel` | Consumo del servicio externo | Productos y dashboard |
+| `StockGauge` | Estado del stock (`stockStatus`) + barra con los tres umbrales + valor en monospace | Columna Stock de `ProductsPage` y panel "Needs attention" del dashboard |
 
 El componente que mejor sostiene el indicador es **`EntityForm`**: traduce el `details` del error `422` de la API al campo exacto del formulario. Eso no lo da Ant Design ni ninguna librería — nace del contrato de la API propia, y es la prueba de que existe una capa de composición pensada, no un envoltorio decorativo.
 
@@ -97,6 +98,26 @@ Cada mantenedor es una página explícita de unas ochenta líneas que compone lo
 - **Bundle grande.** Irrelevante para un backoffice interno.
 - **La estética de Ant es muy reconocible** y personalizarla a fondo implica pelearse con la librería.
 - **Dependencia de terceros en la capa de presentación**: migrar a otra librería sería reescribir las vistas.
+
+## Rediseño visual e informativo (2026-09-16)
+
+### Token "Ejecutivo": fondo claro, no oscuro
+
+El `ConfigProvider` define un tema propio vía `token` y `components` (antes iba vacío). Se evaluó un backoffice completo en tema oscuro —look más "SaaS moderno"— pero se descarta para el fondo de página: el sidebar sí queda en teal oscuro (`#0c3b3f`), pero el contenido usa fondo claro (`#f3f5f4`) y superficies blancas.
+
+El motivo es el video de la demostración, no el gusto estético: un fondo oscuro con texto claro se degrada visiblemente con la compresión de YouTube (bandas de color, halos alrededor del texto), mientras que un fondo claro con texto oscuro sobrevive la compresión casi intacto. Dado que el 6 de los 12 puntos de video depende de "imagen legible", el tema oscuro completo es un riesgo que no vale la pena correr por estética.
+
+### Los umbrales de stock pasan a ser información de primer nivel
+
+Antes, `minimum_stock`/`low_stock`/`high_stock` (ver [03-MODELO-DATOS.md](../03-MODELO-DATOS.md#umbrales-de-stock)) solo se usaban para pintar un `Tag` de color en una columna más. Era una decisión de datos sin reflejo real en la interfaz: el evaluador tenía que leer tres números para entender si un producto necesitaba atención.
+
+Con el rediseño, los umbrales conducen tres piezas de la UI, no una:
+
+- `StockGauge` muestra el valor actual contra los tres umbrales en una sola barra, con su propio `stockStatus()` puro y testeable.
+- La columna Stock de `ProductsPage` ordena por **estado** (crítico → bajo → sano → sobrestock), no por el número crudo: un producto con 5 unidades pero sobre su mínimo ya no aparece "peor" que uno con 50 unidades bajo su mínimo.
+- El dashboard agrega un panel "Needs attention" que filtra y prioriza exactamente los productos que `stockStatus()` marca como no sanos.
+
+Es la diferencia entre guardar el umbral en la base de datos y que el umbral efectivamente gobierne lo que ve quien administra el catálogo.
 
 ## Efecto sobre decisiones previas
 
