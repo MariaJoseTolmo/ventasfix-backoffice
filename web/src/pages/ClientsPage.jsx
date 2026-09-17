@@ -8,7 +8,12 @@ import { useClients } from '../hooks/useClients';
 import { getApiError, getErrorMessage, isStatus } from '../utils/apiError';
 
 const columns = [
-  { title: 'Company RUT', dataIndex: 'company_rut', sorter: (a, b) => a.company_rut.localeCompare(b.company_rut) },
+  {
+    title: 'Company RUT',
+    dataIndex: 'company_rut',
+    sorter: (a, b) => a.company_rut.localeCompare(b.company_rut),
+    render: (value) => <span className="vf-mono">{value}</span>,
+  },
   { title: 'Legal name', dataIndex: 'legal_name', sorter: (a, b) => a.legal_name.localeCompare(b.legal_name) },
   { title: 'Industry', dataIndex: 'industry', sorter: (a, b) => a.industry.localeCompare(b.industry) },
   { title: 'Contact', dataIndex: 'contact_name' },
@@ -71,7 +76,7 @@ export default function ClientsPage() {
 
   return (
     <>
-      <PageHeader title="Clients" actionLabel="New client" onAction={openCreate} />
+      <PageHeader actionLabel="New client" onAction={openCreate} />
       <CrudTable
         columns={columns}
         dataSource={list.data}

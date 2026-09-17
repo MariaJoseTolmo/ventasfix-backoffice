@@ -149,7 +149,7 @@ Los únicos `index.js` son agregadores reales: `models/` carga los modelos, `rou
 web/
 ├── src/
 │   ├── components/
-│   │   ├── common/     CrudTable · EntityForm · ConfirmDelete · PageHeader · StatCard
+│   │   ├── common/     CrudTable · EntityForm · ConfirmDelete · PageHeader · StatCard · StockGauge
 │   │   ├── layout/     AppLayout · Sidebar · Topbar   (sobre Layout de Ant)
 │   │   └── softland/   SoftlandSyncPanel
 │   ├── pages/          LoginPage · DashboardPage

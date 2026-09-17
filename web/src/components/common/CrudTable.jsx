@@ -1,10 +1,10 @@
-import { Alert, Button, Empty, Space, Table } from 'antd';
+import { Alert, Button, Empty, Space, Table, Tooltip } from 'antd';
 import { EditOutlined, ReloadOutlined } from '@ant-design/icons';
 import { getErrorMessage } from '../../utils/apiError';
 
 // Presentational only: receives columns and data, adds the actions column.
 // No data fetching here (Container/Presentational, see ADR-011) — pages
-// own the useQuery/useMutation calls and pass the results down as props.
+// own the TanStack Query hooks and pass the results down as props.
 //
 // `renderDelete` is a render prop rather than a callback: the page decides
 // which confirmation to show (ConfirmDelete) and which mutation to fire,
@@ -22,16 +22,17 @@ export default function CrudTable({
   const actionsColumn = {
     title: 'Actions',
     key: 'actions',
+    align: 'right',
     render: (_, record) => (
       <Space>
-        <Button
-          type="link"
-          icon={<EditOutlined />}
-          onClick={() => onEdit(record)}
-          aria-label={`Edit ${record[rowKey]}`}
-        >
-          Edit
-        </Button>
+        <Tooltip title="Edit">
+          <Button
+            type="text"
+            icon={<EditOutlined />}
+            onClick={() => onEdit(record)}
+            aria-label={`Edit ${record[rowKey]}`}
+          />
+        </Tooltip>
         {renderDelete(record)}
       </Space>
     ),

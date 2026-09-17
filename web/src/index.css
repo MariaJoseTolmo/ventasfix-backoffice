@@ -1,5 +1,173 @@
 /* antd v5+ ships no global reset: without this the browser's default 8px
    body margin adds a permanent scrollbar to every 100vh layout. */
+:root {
+  --vf-font-sans: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vf-font-mono: 'IBM Plex Mono', 'SF Mono', Consolas, 'Liberation Mono', monospace;
+  --vf-border: #e3e7e5;
+  --vf-ink-soft: #69766f;
+}
+
 body {
   margin: 0;
+  font-family: var(--vf-font-sans);
+}
+
+/* Only what Ant Design's theme tokens can't express lives below this line:
+   a custom monospace utility and the StockGauge / login-split layout, none
+   of which map onto a ConfigProvider token or component override. */
+
+.vf-mono {
+  font-family: var(--vf-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- StockGauge --- */
+
+.stock-gauge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 200px;
+}
+
+.stock-gauge-pill {
+  flex-shrink: 0;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 4px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.stock-gauge-bar {
+  position: relative;
+  flex: 1;
+  min-width: 72px;
+  height: 6px;
+  background: var(--vf-border);
+  border-radius: 999px;
+}
+
+.stock-gauge-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  border-radius: 999px;
+}
+
+.stock-gauge-tick {
+  position: absolute;
+  top: -3px;
+  width: 2px;
+  height: 12px;
+  background: var(--vf-ink-soft);
+  opacity: 0.6;
+  transform: translateX(-1px);
+}
+
+.stock-gauge-value {
+  flex-shrink: 0;
+  min-width: 24px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+/* --- Dashboard "Needs attention" panel --- */
+
+.attention-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--vf-border);
+}
+
+.attention-row:last-child {
+  border-bottom: none;
+}
+
+/* --- Sidebar logo mark --- */
+
+.vf-logo {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.vf-logo-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #0d6e66;
+  color: #ffffff;
+  font-family: var(--vf-font-mono);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* --- LoginPage split screen --- */
+
+.login-screen {
+  display: flex;
+  min-height: 100vh;
+}
+
+.login-brand {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+  background-color: #0c3b3f;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.login-brand-content {
+  max-width: 420px;
+}
+
+.login-form-side {
+  flex: 1 1 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: #f3f5f4;
+}
+
+.login-form-card {
+  width: 100%;
+  max-width: 360px;
+  padding: 32px;
+  background: #ffffff;
+  border: 1px solid var(--vf-border);
+  border-radius: 8px;
+}
+
+@media (max-width: 860px) {
+  .login-brand {
+    display: none;
+  }
+}
+
+/* Stat tile label: the icon accompanies the label, never the figure. */
+.vf-stat-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.vf-stat-icon {
+  display: inline-flex;
+  font-size: 13px;
+  opacity: 0.65;
 }

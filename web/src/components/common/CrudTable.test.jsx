@@ -23,7 +23,7 @@ describe('CrudTable', () => {
     expect(screen.getByText('delete-1')).toBeInTheDocument();
     expect(screen.getByText('delete-2')).toBeInTheDocument();
 
-    fireEvent.click(screen.getAllByText('Edit')[0]);
+    fireEvent.click(screen.getAllByRole('button', { name: /^Edit/ })[0]);
     expect(onEdit).toHaveBeenCalledWith(dataSource[0]);
     expect(renderDelete).toHaveBeenCalledWith(dataSource[0]);
     expect(renderDelete).toHaveBeenCalledWith(dataSource[1]);

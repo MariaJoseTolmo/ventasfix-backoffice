@@ -8,7 +8,12 @@ import { useUsers } from '../hooks/useUsers';
 import { getApiError, getErrorMessage, isStatus } from '../utils/apiError';
 
 const columns = [
-  { title: 'RUT', dataIndex: 'rut', sorter: (a, b) => a.rut.localeCompare(b.rut) },
+  {
+    title: 'RUT',
+    dataIndex: 'rut',
+    sorter: (a, b) => a.rut.localeCompare(b.rut),
+    render: (value) => <span className="vf-mono">{value}</span>,
+  },
   { title: 'First name', dataIndex: 'first_name', sorter: (a, b) => a.first_name.localeCompare(b.first_name) },
   { title: 'Last name', dataIndex: 'last_name', sorter: (a, b) => a.last_name.localeCompare(b.last_name) },
   { title: 'Email', dataIndex: 'email', sorter: (a, b) => a.email.localeCompare(b.email) },
@@ -75,7 +80,7 @@ export default function UsersPage() {
 
   return (
     <>
-      <PageHeader title="Users" actionLabel="New user" onAction={openCreate} />
+      <PageHeader actionLabel="New user" onAction={openCreate} />
       <CrudTable
         columns={columns}
         dataSource={list.data}

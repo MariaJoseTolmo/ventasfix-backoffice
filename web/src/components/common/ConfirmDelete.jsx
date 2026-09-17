@@ -1,4 +1,4 @@
-import { Button, Popconfirm, message } from 'antd';
+import { Button, Popconfirm, Tooltip, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
 import { getErrorMessage } from '../../utils/apiError';
 
@@ -25,9 +25,9 @@ export default function ConfirmDelete({ onConfirm, entityLabel = 'record' }) {
       cancelText="Cancel"
       onConfirm={handleConfirm}
     >
-      <Button type="link" danger icon={<DeleteOutlined />}>
-        Delete
-      </Button>
+      <Tooltip title="Delete">
+        <Button type="text" danger icon={<DeleteOutlined />} aria-label={`Delete ${entityLabel}`} />
+      </Tooltip>
     </Popconfirm>
   );
 }
