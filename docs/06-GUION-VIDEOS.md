@@ -74,7 +74,7 @@ Texto sugerido, para decir en cámara:
 
 **Objetivo:** demostrar los 15 endpoints CRUD con sus códigos HTTP correctos, la autenticación y la arquitectura en capas. **Este video sostiene 36 puntos de CRUD + 8 de autenticación + 6 de servicios + 7 de patrones.**
 
-Herramienta: **Swagger UI** en `/api-docs`. Es la más legible en pantalla y permite mostrar el spec y probar en el mismo lugar. Tener Postman o `curl` como respaldo por si algo falla en vivo.
+Herramienta: **Swagger UI**. Se puede abrir en `http://localhost/api-docs` (a través de Nginx) o en `http://localhost:3000/api-docs` (directo a la API): el spec declara un servidor relativo, así que «Try it out» usa siempre el origen de la página y no cruza puertos. Es la más legible en pantalla y permite mostrar el spec y probar en el mismo lugar. Tener Postman o `curl` como respaldo por si algo falla en vivo.
 
 ### Bloque 2 — Presentación (0:15 – 1:00)
 

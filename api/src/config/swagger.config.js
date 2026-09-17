@@ -19,7 +19,11 @@ const swaggerDocument = generator.generateDocument({
     version: '1.0.0',
     description: 'REST API for the VentasFix backoffice: users, products, clients, auth, dashboard and the Softland integration.',
   },
-  servers: [{ url: 'http://localhost:3000' }],
+  // A relative server URL keeps "Try it out" on the page's own origin. Hardcoding
+  // http://localhost:3000 breaks Swagger when it is reached through the Nginx proxy
+  // on port 80: a different port is a different origin, so the request becomes
+  // cross-origin and CORS blocks it.
+  servers: [{ url: '/', description: 'Same origin as this page' }],
 });
 
 module.exports = swaggerDocument;
